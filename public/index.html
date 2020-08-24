@@ -15,7 +15,10 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/SPServices/corev15.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/style.css" />
     <!--
+    
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -25,10 +28,39 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <style type="text/css">
+      #container {
+        /* To create the column layout. */
+        display: flex;
+
+        /* To make the container relative to its children. */
+        position: relative;
+      }
+
+      #container .ck.ck-editor,
+      #root {
+        /* To stretch the editor to max 700px
+                    (just to look nice for this example but it can be any size). */
+        width: 100%;
+        /* max-width: 700px; */
+      }
+
+      #sidebar {
+        /* Set some size for the sidebar (it can be any). */
+        min-width: 300px;
+
+        /* Add some distance. */
+        padding: 0 10px;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="presence-list-container"></div>
+    <div id="container">
+      <div id="root"></div>
+      <div id="sidebar"></div>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -39,5 +71,77 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/MicrosoftAjax.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/init.js"
+    ></script>
+
+    <script type="text/javascript" src="%PUBLIC_URL%/SPServices/sp.js"></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/strings.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/clienttemplates.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/clientforms.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/clientpeoplepicker.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/autofill.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/sp.core.js"
+    ></script>
+    <SharePoint:FormDigest
+      ID="FormDigest1"
+      runat="server"
+    ></SharePoint:FormDigest>
+
+    <SharePoint:ScriptLink
+      name="clientforms.js"
+      runat="server"
+      LoadAfterUI="true"
+      Localizable="false"
+      __designer:Preview=""
+      __designer:Values="&lt;P N=&#39;Name&#39; T=&#39;clientforms.js&#39; /&gt;&lt;P N=&#39;Localizable&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;LoadAfterUI&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl01&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"
+    />
+    <SharePoint:ScriptLink
+      name="clientpeoplepicker.js"
+      runat="server"
+      LoadAfterUI="true"
+      Localizable="false"
+      __designer:Preview=""
+      __designer:Values="&lt;P N=&#39;Name&#39; T=&#39;clientpeoplepicker.js&#39; /&gt;&lt;P N=&#39;Localizable&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;LoadAfterUI&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl02&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"
+    />
+    <SharePoint:ScriptLink
+      name="autofill.js"
+      runat="server"
+      LoadAfterUI="true"
+      Localizable="false"
+      __designer:Preview=""
+      __designer:Values="&lt;P N=&#39;Name&#39; T=&#39;autofill.js&#39; /&gt;&lt;P N=&#39;Localizable&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;LoadAfterUI&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl03&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"
+    />
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/MicrosoftAjax.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="%PUBLIC_URL%/SPServices/sp.runtime.js"
+    ></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/SPServices/sp.js"></script>
   </body>
 </html>
