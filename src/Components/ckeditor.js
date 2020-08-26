@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import GetCurrentUser from "./GetCurrentLoginUser";
-import $ from "jquery";
+
 import CKEditor from "@ckeditor/ckeditor5-react";
 
 // NOTE: Use the editor from source (not a build)!
@@ -35,6 +35,8 @@ import PresenceList from "@ckeditor/ckeditor5-real-time-collaboration/src/presen
 import RealTimeCollaborativeTrackChanges from "@ckeditor/ckeditor5-real-time-collaboration/src/realtimecollaborativetrackchanges";
 import Mention from "@ckeditor/ckeditor5-mention/src/mention";
 
+var configDetails = "user.id=&user.name=Shiv&role=writer";
+
 var windowLocation = window.location.href;
 var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
 var channelIDurl = "200826103829";
@@ -48,8 +50,7 @@ const mentionNames = {
     },
   ],
 };
-const vartokenurl =
-  "https://73641.cke-cs.com/token/dev/950193beddb6a3d006815f9c45535c90965ce0eca129090a423e0ad2a423?";
+
 ClassicEditor.builtinPlugins = [
   Essentials,
   // UploadAdapter,
@@ -80,7 +81,6 @@ ClassicEditor.builtinPlugins = [
   PresenceList,
   Mention,
 ];
-console.log(vartokenurl);
 
 const MentionPlugin = ClassicEditor.builtinPlugins.find(
   (plugin) => plugin.pluginName == "Mention"
@@ -108,11 +108,14 @@ const editorConfiguration = {
     "redo",
     "|",
     "comment",
-    "trackChanges",
+    // "trackChanges",
   ],
   cloudServices: {
     // PROVIDE CORRECT VALUES HERE:
-    tokenUrl: vartokenurl,
+    tokenUrl:
+      "https://73641.cke-cs.com/token/dev/950193beddb6a3d006815f9c45535c90965ce0eca129090a423e0ad2a423?" +
+      configDetails +
+      "",
     uploadUrl: "https://73641.cke-cs.com/easyimage/upload/",
     webSocketUrl: "wss://73641.cke-cs.com/ws",
   },
@@ -139,13 +142,14 @@ class App extends Component {
     super();
     this.state = {
       CurrentUser: "",
-      editorConfiguration: editorConfiguration,
+      CurrentUserID: "",
     };
   }
-  componentWillMount() {
-    this.RetrieveUserData();
+  componentDidMount() {
+    this.RetrieveSPData();
   }
   // RetrieveSPData() {
+
   //   var reactHandler = this;
   //   var spRequest = new XMLHttpRequest();
   //   spRequest.open(
@@ -168,31 +172,27 @@ class App extends Component {
   //   spRequest.send();
   // }
 
-  RetrieveUserData = () => {
-    GetCurrentUser().then((u) => {
-      this.setState({ CurrentUser: u.Title });
-      let configDetails =
-        vartokenurl + "user.id=&user.name=" + u.Title + "&role=writer";
-      let newEditor = $.extend({}, editorConfiguration);
-      newEditor.cloudServices.tokenUrl = configDetails;
-      this.setState({ editorConfiguration: newEditor }, function () {
-        console.log("editorConfiguration", this.state.editorConfiguration);
-      });
-    });
+  RetrieveSPData = () => {
+    GetCurrentUser().then((u) =>
+      this.setState({ CurrentUserID: u.Id, CurrentUser: u.Title })
+    );
   };
-
   render() {
-    console.log("this state CurrentUser", this.state.CurrentUser);
-    console.log("editorConfiguration render", this.state.editorConfiguration);
+    console.log(
+      "Currnet User in state",
+      this.state.CurrentUser,
+      this.state.CurrentUserID
+    );
     return (
       <div className="App">
         <CKEditor
           editor={ClassicEditor}
-          config={this.state.editorConfiguration}
+          config={editorConfiguration}
           data=""
           onInit={(editor) => {
             // You can store the "editor" and use when it is needed.
             console.log("Editor is ready to use!", editor);
+            editor.execute("trackChanges");
           }}
           onChange={(event, editor) => {
             const data = editor.getData();
