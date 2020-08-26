@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-
+import GetCurrentUser from "./GetCurrentLoginUser";
+import $ from "jquery";
 import CKEditor from "@ckeditor/ckeditor5-react";
 
 // NOTE: Use the editor from source (not a build)!
@@ -32,42 +33,61 @@ import RealTimeCollaborativeEditing from "@ckeditor/ckeditor5-real-time-collabor
 import RealTimeCollaborativeComments from "@ckeditor/ckeditor5-real-time-collaboration/src/realtimecollaborativecomments";
 import PresenceList from "@ckeditor/ckeditor5-real-time-collaboration/src/presencelist";
 import RealTimeCollaborativeTrackChanges from "@ckeditor/ckeditor5-real-time-collaboration/src/realtimecollaborativetrackchanges";
-import { Mention } from "react-mentions";
-var configDetails = "user.id=e5&user.name=Shiv&role=writer";
+import Mention from "@ckeditor/ckeditor5-mention/src/mention";
+
+var windowLocation = window.location.href;
+var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
+var channelIDurl = "200826103829";
+
+const mentionNames = {
+  feeds: [
+    {
+      marker: "@",
+      feed: ["@Barney", "@Lily", "@Marshall", "@Robin", "@Ted", "@shivakumar"],
+      minimumCharacters: 0,
+    },
+  ],
+};
+const vartokenurl =
+  "https://73641.cke-cs.com/token/dev/950193beddb6a3d006815f9c45535c90965ce0eca129090a423e0ad2a423?";
+ClassicEditor.builtinPlugins = [
+  Essentials,
+  // UploadAdapter,
+  // Autoformat,
+  Bold,
+  Italic,
+  BlockQuote,
+  CKFinder,
+  EasyImage,
+  Heading,
+  Image,
+  ImageCaption,
+  ImageStyle,
+  ImageToolbar,
+  ImageUpload,
+  Indent,
+  Link,
+  List,
+  MediaEmbed,
+  Paragraph,
+  PasteFromOffice,
+  Table,
+  TableToolbar,
+  TextTransformation,
+  RealTimeCollaborativeEditing,
+  RealTimeCollaborativeComments,
+  RealTimeCollaborativeTrackChanges,
+  PresenceList,
+  Mention,
+];
+console.log(vartokenurl);
+
 const MentionPlugin = ClassicEditor.builtinPlugins.find(
   (plugin) => plugin.pluginName == "Mention"
 );
+
 const editorConfiguration = {
-  plugins: [
-    Essentials,
-    // UploadAdapter,
-    // Autoformat,
-    Bold,
-    Italic,
-    BlockQuote,
-    CKFinder,
-    EasyImage,
-    Heading,
-    Image,
-    ImageCaption,
-    ImageStyle,
-    ImageToolbar,
-    ImageUpload,
-    Indent,
-    Link,
-    List,
-    MediaEmbed,
-    Paragraph,
-    PasteFromOffice,
-    Table,
-    TableToolbar,
-    TextTransformation,
-    RealTimeCollaborativeEditing,
-    RealTimeCollaborativeComments,
-    RealTimeCollaborativeTrackChanges,
-    PresenceList,
-    Mention,
-  ],
+  plugins: ClassicEditor.builtinPlugins,
   toolbar: [
     "heading",
     "|",
@@ -92,15 +112,12 @@ const editorConfiguration = {
   ],
   cloudServices: {
     // PROVIDE CORRECT VALUES HERE:
-    tokenUrl:
-      "https://73641.cke-cs.com/token/dev/950193beddb6a3d006815f9c45535c90965ce0eca129090a423e0ad2a423?" +
-      configDetails +
-      "",
+    tokenUrl: vartokenurl,
     uploadUrl: "https://73641.cke-cs.com/easyimage/upload/",
     webSocketUrl: "wss://73641.cke-cs.com/ws",
   },
   collaboration: {
-    channelId: "document-id",
+    channelId: channelIDurl,
   },
   sidebar: {
     container: document.querySelector("#sidebar"),
@@ -111,26 +128,67 @@ const editorConfiguration = {
   comments: {
     editorConfig: {
       extraPlugins: [MentionPlugin],
-      mention: {
-        feeds: [
-          {
-            marker: "@",
-            feed: ["@Barney", "@Lily", "@Marshall", "@Robin", "@Ted"],
-            minimumCharacters: 1,
-          },
-        ],
-      },
+      mention: mentionNames,
     },
   },
+  mention: mentionNames,
 };
 
 class App extends Component {
+  constructor(props) {
+    super();
+    this.state = {
+      CurrentUser: "",
+      editorConfiguration: editorConfiguration,
+    };
+  }
+  componentWillMount() {
+    this.RetrieveUserData();
+  }
+  // RetrieveSPData() {
+  //   var reactHandler = this;
+  //   var spRequest = new XMLHttpRequest();
+  //   spRequest.open(
+  //     "GET",
+  //     "/sites/DMSDemo/shivKumar/_api/web/lists/getbytitle('Bug%20Tracking')/items",
+  //     true
+  //   );
+  //   spRequest.setRequestHeader("Accept", "application/json");
+  //   spRequest.onreadystatechange = function () {
+  //     if (spRequest.readyState === 4 && spRequest.status === 200) {
+  //       var listData = JSON.parse(spRequest.responseText);
+  //       console.log("listData" + listData);
+  //       reactHandler.setState({
+  //         items: listData.value,
+  //       });
+  //     } else if (spRequest.readyState === 4 && spRequest.status !== 200) {
+  //       console.log("Error Occured !");
+  //     }
+  //   };
+  //   spRequest.send();
+  // }
+
+  RetrieveUserData = () => {
+    GetCurrentUser().then((u) => {
+      this.setState({ CurrentUser: u.Title });
+      let configDetails =
+        vartokenurl + "user.id=&user.name=" + u.Title + "&role=writer";
+      let newEditor = $.extend({}, editorConfiguration);
+      newEditor.cloudServices.tokenUrl = configDetails;
+      this.setState({ editorConfiguration: newEditor }, function () {
+        console.log("editorConfiguration", this.state.editorConfiguration);
+      });
+    });
+  };
+
   render() {
+    console.log("this state CurrentUser", this.state.CurrentUser);
+    console.log("editorConfiguration render", this.state.editorConfiguration);
     return (
       <div className="App">
         <CKEditor
           editor={ClassicEditor}
-          config={editorConfiguration}
+          config={this.state.editorConfiguration}
           data=""
           onInit={(editor) => {
             // You can store the "editor" and use when it is needed.
