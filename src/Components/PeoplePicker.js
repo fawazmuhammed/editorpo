@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import GetCurrentUser from "./GetCurrentLoginUser";
-import { Col, Row, Form, FormGroup, Label, Input } from "reactstrap";
+import { Col, Row, Form } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import $ from "jquery";
 
@@ -66,8 +66,6 @@ export class PeoplePicker extends Component {
       min2dig +
       sec2dig;
 
-    console.log("Currnet User in state", this.state.CurrentUser);
-
     return (
       <Row className="container emp-container">
         <Form>
@@ -89,42 +87,7 @@ export class PeoplePicker extends Component {
       </Row>
     );
   }
-  saveinfo() {
-    var curUser;
-    $.getJSON(
-      "https://resembleae.sharepoint.com/sites/DMSDemo/_api/web/currentuser"
-    )
-      .done(function (data) {
-        curUser = data.Id;
-      })
-      .fail(function () {
-        console.log("Failed");
-      });
-
-    var usersEntered = $("#peoplepicker .ms-entity-resolved").text();
-    console.log("Current User ", curUser, "userEntered", usersEntered);
-    var item = {
-      __metadata: { type: "SP.Data.CkeditorListItem" },
-      Title: "updated title",
-    };
-    console.log(JSON.stringify(item));
-
-    $.ajax({
-      url:
-        "https://resembleae.sharepoint.com/sites/DMSDemo/_api/web/lists/GetByTitle('ckeditor')/items",
-      type: "POST",
-      contentType: "application/json;odata=verbose",
-      data: JSON.stringify(item),
-      headers: {
-        Accept: "application/json;odata=verbose",
-        "X-RequestDigest": $("#__REQUESTDIGEST").val(),
-      },
-      success: function (data) {},
-      error: function (data) {
-        console.log(data);
-      },
-    });
-  }
+  saveinfo() {}
 }
 
 export default PeoplePicker;

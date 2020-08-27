@@ -1,7 +1,10 @@
 import React, { Component } from "react";
+import Button from "react-bootstrap/Button";
+import "bootstrap/dist/css/bootstrap.min.css";
 import GetCurrentUser from "./GetCurrentLoginUser";
 
 import CKEditor from "@ckeditor/ckeditor5-react";
+// import EditorWatchdog from "@ckeditor/ckeditor5-watchdog/src/editorwatchdog";
 
 // NOTE: Use the editor from source (not a build)!
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
@@ -35,11 +38,12 @@ import PresenceList from "@ckeditor/ckeditor5-real-time-collaboration/src/presen
 import RealTimeCollaborativeTrackChanges from "@ckeditor/ckeditor5-real-time-collaboration/src/realtimecollaborativetrackchanges";
 import Mention from "@ckeditor/ckeditor5-mention/src/mention";
 
-var configDetails = "user.id=&user.name=Shiv&role=writer";
-
+var configDetails = "";
 var windowLocation = window.location.href;
 var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
-var channelIDurl = "200826103829";
+channelIDurl = "200826103829";
+
+// const watchdog = new EditorWatchdog(ClassicEditor);
 
 const mentionNames = {
   feeds: [
@@ -83,7 +87,7 @@ ClassicEditor.builtinPlugins = [
 ];
 
 const MentionPlugin = ClassicEditor.builtinPlugins.find(
-  (plugin) => plugin.pluginName == "Mention"
+  (plugin) => plugin.pluginName === "Mention"
 );
 
 const editorConfiguration = {
@@ -137,6 +141,36 @@ const editorConfiguration = {
   mention: mentionNames,
 };
 
+function initializePeoplePicker(
+  peoplePickerElementId,
+  AllowMultipleValues,
+  PeopleorGroup,
+  GroupID
+) {
+  // Create a schema to store picker properties, and set the properties.
+  var schema = {};
+  schema["SearchPrincipalSource"] = 15;
+  schema["ResolvePrincipalSource"] = 15;
+  schema["MaximumEntitySuggestions"] = 50;
+  schema["Width"] = "280px";
+  schema["AllowMultipleValues"] = AllowMultipleValues;
+  if (PeopleorGroup === "PeopleOnly") schema["PrincipalAccountType"] = "User";
+  else schema["PrincipalAccountType"] = "User,DL,SecGroup,SPGroup";
+  if (GroupID > 0) {
+    schema["SharePointGroupID"] = GroupID;
+  }
+  // Render and initialize the picker.
+  // Pass the ID of the DOM element that contains the picker, an array of initial
+  // PickerEntity objects to set the picker value, and a schema that defines
+  // picker properties.
+  //console.log(this)
+  window.SPClientPeoplePicker_InitStandaloneControlWrapper(
+    peoplePickerElementId,
+    null,
+    schema
+  );
+}
+
 class App extends Component {
   constructor(props) {
     super();
@@ -146,31 +180,9 @@ class App extends Component {
     };
   }
   componentDidMount() {
+    initializePeoplePicker("peoplepicker", true, "People Only", 44);
     this.RetrieveSPData();
   }
-  // RetrieveSPData() {
-
-  //   var reactHandler = this;
-  //   var spRequest = new XMLHttpRequest();
-  //   spRequest.open(
-  //     "GET",
-  //     "/sites/DMSDemo/shivKumar/_api/web/lists/getbytitle('Bug%20Tracking')/items",
-  //     true
-  //   );
-  //   spRequest.setRequestHeader("Accept", "application/json");
-  //   spRequest.onreadystatechange = function () {
-  //     if (spRequest.readyState === 4 && spRequest.status === 200) {
-  //       var listData = JSON.parse(spRequest.responseText);
-  //       console.log("listData" + listData);
-  //       reactHandler.setState({
-  //         items: listData.value,
-  //       });
-  //     } else if (spRequest.readyState === 4 && spRequest.status !== 200) {
-  //       console.log("Error Occured !");
-  //     }
-  //   };
-  //   spRequest.send();
-  // }
 
   RetrieveSPData = () => {
     GetCurrentUser().then((u) =>
@@ -183,8 +195,22 @@ class App extends Component {
       this.state.CurrentUser,
       this.state.CurrentUserID
     );
+
+    var configDetails =
+      "user.id=" +
+      this.state.CurrentUserID +
+      "&user.name=" +
+      this.state.CurrentUser +
+      "&role=writer";
     return (
-      <div className="App">
+      <div>
+        <div className="row">
+          <div id="peoplepicker"></div>
+          <Button type="button" size="sm" variant="primary">
+            Add User
+          </Button>
+        </div>
+
         <CKEditor
           editor={ClassicEditor}
           config={editorConfiguration}
