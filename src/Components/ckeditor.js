@@ -38,7 +38,7 @@ import PresenceList from "@ckeditor/ckeditor5-real-time-collaboration/src/presen
 import RealTimeCollaborativeTrackChanges from "@ckeditor/ckeditor5-real-time-collaboration/src/realtimecollaborativetrackchanges";
 import Mention from "@ckeditor/ckeditor5-mention/src/mention";
 
-var configDetails = "";
+var configDetails = "user.id=101&user.name=Shivakumar&role=writer";
 var windowLocation = window.location.href;
 var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
 channelIDurl = "200826103829";
@@ -196,12 +196,6 @@ class App extends Component {
       this.state.CurrentUserID
     );
 
-    var configDetails =
-      "user.id=" +
-      this.state.CurrentUserID +
-      "&user.name=" +
-      this.state.CurrentUser +
-      "&role=writer";
     return (
       <div>
         <div className="row">
