@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import GetCurrentUser from "./GetCurrentLoginUser";
 import { Col, Row, Form } from "reactstrap";
 import { NavLink } from "react-router-dom";
-import $ from "jquery";
+import GetDigest from "./GetDigest";
+import CreatePO from "./CreateListItem";
 
 function initializePeoplePicker(
   peoplePickerElementId,
@@ -39,6 +40,7 @@ export class PeoplePicker extends Component {
     super();
     this.state = {
       CurrentUser: "",
+      CurrentUserID: "",
     };
   }
   componentDidMount() {
@@ -46,7 +48,9 @@ export class PeoplePicker extends Component {
     this.RetrieveUserData();
   }
   RetrieveUserData = () => {
-    GetCurrentUser().then((u) => this.setState({ CurrentUser: u.Title }));
+    GetCurrentUser().then((u) =>
+      this.setState({ CurrentUserID: u.Id, CurrentUser: u.Title })
+    );
   };
   render() {
     var dt = new Date();
@@ -87,7 +91,28 @@ export class PeoplePicker extends Component {
       </Row>
     );
   }
-  saveinfo() {}
+  saveinfo = (e) => {
+    console.log("save info");
+
+    var userDetails = {
+      id: this.state.CurrentUserID,
+      userName: this.state.CurrentUser,
+    };
+    var dt = new Date();
+    var year2dig = ("0" + dt.getFullYear()).slice(-2);
+    var mon2dig = ("0" + (dt.getMonth() + 1)).slice(-2).toString();
+    var date2dig = ("0" + dt.getDate()).slice(-2);
+    var hrs2dig = ("0" + dt.getHours()).slice(-2);
+    var min2dig = ("0" + dt.getMinutes()).slice(-2);
+    var sec2dig = ("0" + dt.getSeconds()).slice(-2);
+    let channelid = year2dig + mon2dig + date2dig + hrs2dig + min2dig + sec2dig;
+    let POData = {
+      Title: channelid,
+      users: JSON.stringify(userDetails),
+    };
+
+    GetDigest().then((d) => CreatePO("ckeditor", POData, d).then());
+  };
 }
 
 export default PeoplePicker;

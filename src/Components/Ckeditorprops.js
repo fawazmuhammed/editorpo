@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GetCurrentUser from "./GetCurrentLoginUser";
+import GetUserDetails from "./Getlistitemsbychnnelid";
 
 import CKEditor from "@ckeditor/ckeditor5-react";
 // import EditorWatchdog from "@ckeditor/ckeditor5-watchdog/src/editorwatchdog";
@@ -113,19 +114,33 @@ class Ckeditorprops extends Component {
     this.state = {
       CurrentUser: "",
       CurrentUserID: "",
+      userDetailsfromList: "",
     };
   }
   componentDidMount() {
     initializePeoplePicker("peoplepicker", true, "People Only", 44);
-    this.RetrieveSPData();
+    this.GetcurUserDetails();
+    this.GetUserDetailsSer();
   }
 
-  RetrieveSPData = () => {
+  GetcurUserDetails = () => {
     GetCurrentUser().then((u) =>
       this.setState({ CurrentUserID: u.Id, CurrentUser: u.Title })
     );
   };
+
+  GetUserDetailsSer = () => {
+    GetUserDetails("ckeditor").then((r) =>
+      this.setState({
+        userDetailsfromList: r,
+      })
+    );
+  };
+
+  // return Promise.resolve(result);
+
   render() {
+    console.log("userDetailsfromList", this.state.userDetailsfromList);
     let configDetails =
       "user.id=" +
       this.state.CurrentUserID +
@@ -238,7 +253,12 @@ class Ckeditorprops extends Component {
       return (
         <div id="adduser" className="row">
           <div id="peoplepicker"></div>
-          <Button type="button" size="sm" variant="primary">
+          <Button
+            type="button"
+            size="sm"
+            variant="primary"
+            onClick={savetoList}
+          >
             Add User
           </Button>
         </div>
@@ -246,5 +266,8 @@ class Ckeditorprops extends Component {
     }
   }
 }
-
+function savetoList(e) {
+  e.preventDefault();
+  console.log("savetoList");
+}
 export default Ckeditorprops;
