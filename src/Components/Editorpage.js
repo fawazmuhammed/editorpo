@@ -39,9 +39,7 @@ import RealTimeCollaborativeTrackChanges from "@ckeditor/ckeditor5-real-time-col
 import Mention from "@ckeditor/ckeditor5-mention/src/mention";
 
 var configDetails = "user.id=101&user.name=Shivakumar&role=writer";
-var windowLocation = window.location.href;
-var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
-channelIDurl = "200826103829";
+var channelIDurl = "200826103829";
 
 // const watchdog = new EditorWatchdog(ClassicEditor);
 
@@ -141,93 +139,35 @@ const editorConfiguration = {
   mention: mentionNames,
 };
 
-function initializePeoplePicker(
-  peoplePickerElementId,
-  AllowMultipleValues,
-  PeopleorGroup,
-  GroupID
-) {
-  // Create a schema to store picker properties, and set the properties.
-  var schema = {};
-  schema["SearchPrincipalSource"] = 15;
-  schema["ResolvePrincipalSource"] = 15;
-  schema["MaximumEntitySuggestions"] = 50;
-  schema["Width"] = "280px";
-  schema["AllowMultipleValues"] = AllowMultipleValues;
-  if (PeopleorGroup === "PeopleOnly") schema["PrincipalAccountType"] = "User";
-  else schema["PrincipalAccountType"] = "User,DL,SecGroup,SPGroup";
-  if (GroupID > 0) {
-    schema["SharePointGroupID"] = GroupID;
+class Editorpage extends Component {
+  constructor(props, contex) {
+    super(props, contex);
   }
-  // Render and initialize the picker.
-  // Pass the ID of the DOM element that contains the picker, an array of initial
-  // PickerEntity objects to set the picker value, and a schema that defines
-  // picker properties.
-  //console.log(this)
-  window.SPClientPeoplePicker_InitStandaloneControlWrapper(
-    peoplePickerElementId,
-    null,
-    schema
-  );
-}
-
-class App extends Component {
-  constructor(props) {
-    super();
-    this.state = {
-      CurrentUser: "",
-      CurrentUserID: "",
-    };
-  }
-  componentDidMount() {
-    initializePeoplePicker("peoplepicker", true, "People Only", 44);
-    this.RetrieveSPData();
-  }
-
-  RetrieveSPData = () => {
-    GetCurrentUser().then((u) =>
-      this.setState({ CurrentUserID: u.Id, CurrentUser: u.Title })
-    );
-  };
   render() {
-    console.log(
-      "Currnet User in state",
-      this.state.CurrentUser,
-      this.state.CurrentUserID
-    );
-
+    console.log("user Details om Editor Page", this.props.CurUserDetails);
     return (
-      <div>
-        <div className="row">
-          <div id="peoplepicker"></div>
-          <Button type="button" size="sm" variant="primary">
-            Add User
-          </Button>
-        </div>
-
-        <CKEditor
-          editor={ClassicEditor}
-          config={editorConfiguration}
-          data=""
-          onInit={(editor) => {
-            // You can store the "editor" and use when it is needed.
-            console.log("Editor is ready to use!", editor);
-            editor.execute("trackChanges");
-          }}
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            console.log({ event, editor, data });
-          }}
-          onBlur={(event, editor) => {
-            console.log("Blur.", editor);
-          }}
-          onFocus={(event, editor) => {
-            console.log("Focus.", editor);
-          }}
-        />
-      </div>
+      <CKEditor
+        editor={ClassicEditor}
+        config={editorConfiguration}
+        data=""
+        onInit={(editor) => {
+          // You can store the "editor" and use when it is needed.
+          console.log("Editor is ready to use!", editor);
+          editor.execute("trackChanges");
+        }}
+        onChange={(event, editor) => {
+          const data = editor.getData();
+          console.log({ event, editor, data });
+        }}
+        onBlur={(event, editor) => {
+          console.log("Blur.", editor);
+        }}
+        onFocus={(event, editor) => {
+          console.log("Focus.", editor);
+        }}
+      />
     );
   }
 }
 
-export default App;
+export default Editorpage;
