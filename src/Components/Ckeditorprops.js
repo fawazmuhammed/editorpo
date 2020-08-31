@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GetCurrentUser from "./GetCurrentLoginUser";
 import GetUserDetails from "./Getlistitemsbychnnelid";
+import $ from "jquery";
 
 import CKEditor from "@ckeditor/ckeditor5-react";
 // import EditorWatchdog from "@ckeditor/ckeditor5-watchdog/src/editorwatchdog";
@@ -39,9 +40,9 @@ import PresenceList from "@ckeditor/ckeditor5-real-time-collaboration/src/presen
 import RealTimeCollaborativeTrackChanges from "@ckeditor/ckeditor5-real-time-collaboration/src/realtimecollaborativetrackchanges";
 import Mention from "@ckeditor/ckeditor5-mention/src/mention";
 
-var windowLocation = window.location.href;
-var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
-channelIDurl = "200826103829";
+// var windowLocation = window.location.href;
+// var channelIDurl = windowLocation.substr(windowLocation.indexOf("?") + 1);
+var channelIDurl = "200826103829";
 
 ClassicEditor.builtinPlugins = [
   Essentials,
@@ -194,11 +195,11 @@ class Ckeditorprops extends Component {
       cloudServices: {
         // PROVIDE CORRECT VALUES HERE:
         tokenUrl:
-          "https://73641.cke-cs.com/token/dev/950193beddb6a3d006815f9c45535c90965ce0eca129090a423e0ad2a423?" +
+          "https://72917.cke-cs.com/token/dev/fdf286ad155ac3fa748a2e0b892f50309d474b2bd1d4419bd84086753a71?" +
           configDetails +
           "",
-        uploadUrl: "https://73641.cke-cs.com/easyimage/upload/",
-        webSocketUrl: "wss://73641.cke-cs.com/ws",
+        uploadUrl: "https://72917.cke-cs.com/easyimage/upload/",
+        webSocketUrl: "wss://72917.cke-cs.com/ws",
       },
       collaboration: {
         channelId: channelIDurl,
@@ -218,12 +219,17 @@ class Ckeditorprops extends Component {
       mention: mentionNames,
     };
 
-    if (this.state.CurrentUser != "") {
+    if (this.state.CurrentUser !== "") {
       return (
         <div>
           <div id="adduser" className="row">
             <div id="peoplepicker"></div>
-            <Button type="button" size="sm" variant="primary">
+            <Button
+              type="button"
+              size="sm"
+              variant="primary"
+              onClick={this.savetoList}
+            >
               Add User
             </Button>
           </div>
@@ -257,7 +263,7 @@ class Ckeditorprops extends Component {
             type="button"
             size="sm"
             variant="primary"
-            onClick={savetoList}
+            onClick={this.savetoList}
           >
             Add User
           </Button>
@@ -265,9 +271,10 @@ class Ckeditorprops extends Component {
       );
     }
   }
+  savetoList() {
+    let adduser = $("#peoplepicker .ms-entity-resolved").text();
+    console.log("savetoList", adduser);
+  }
 }
-function savetoList(e) {
-  e.preventDefault();
-  console.log("savetoList");
-}
+
 export default Ckeditorprops;

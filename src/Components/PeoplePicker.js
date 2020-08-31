@@ -4,6 +4,7 @@ import { Col, Row, Form } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import GetDigest from "./GetDigest";
 import CreatePO from "./CreateListItem";
+import $ from "jquery";
 
 function initializePeoplePicker(
   peoplePickerElementId,
@@ -27,7 +28,7 @@ function initializePeoplePicker(
   // Pass the ID of the DOM element that contains the picker, an array of initial
   // PickerEntity objects to set the picker value, and a schema that defines
   // picker properties.
-  //console.log(this)
+
   window.SPClientPeoplePicker_InitStandaloneControlWrapper(
     peoplePickerElementId,
     null,
@@ -41,6 +42,7 @@ export class PeoplePicker extends Component {
     this.state = {
       CurrentUser: "",
       CurrentUserID: "",
+      usersArr: [],
     };
   }
   componentDidMount() {
@@ -92,26 +94,47 @@ export class PeoplePicker extends Component {
     );
   }
   saveinfo = (e) => {
-    console.log("save info");
+    let curUserDetails =
+      '{"id": "' +
+      this.state.CurrentUserID +
+      '", "userName" :"' +
+      this.state.CurrentUser +
+      '"}';
+    this.state.usersArr.push(curUserDetails);
 
-    var userDetails = {
-      id: this.state.CurrentUserID,
-      userName: this.state.CurrentUser,
-    };
-    var dt = new Date();
-    var year2dig = ("0" + dt.getFullYear()).slice(-2);
-    var mon2dig = ("0" + (dt.getMonth() + 1)).slice(-2).toString();
-    var date2dig = ("0" + dt.getDate()).slice(-2);
-    var hrs2dig = ("0" + dt.getHours()).slice(-2);
-    var min2dig = ("0" + dt.getMinutes()).slice(-2);
-    var sec2dig = ("0" + dt.getSeconds()).slice(-2);
+    let enteredUserVal = $("#peoplepicker .ms-entity-resolved").text();
+    let enteredUserDetails =
+      '{"id": "' +
+      this.state.CurrentUserID +
+      '", "userName" :"' +
+      enteredUserVal +
+      '"}';
+
+    this.state.usersArr.push(enteredUserDetails);
+
+    let userDetails = '{"users":[' + this.state.usersArr + "]}";
+
+    let dt = new Date();
+    let year2dig = ("0" + dt.getFullYear()).slice(-2);
+    let mon2dig = ("0" + (dt.getMonth() + 1)).slice(-2).toString();
+    let date2dig = ("0" + dt.getDate()).slice(-2);
+    let hrs2dig = ("0" + dt.getHours()).slice(-2);
+    let min2dig = ("0" + dt.getMinutes()).slice(-2);
+    let sec2dig = ("0" + dt.getSeconds()).slice(-2);
     let channelid = year2dig + mon2dig + date2dig + hrs2dig + min2dig + sec2dig;
-    let POData = {
-      Title: channelid,
-      users: JSON.stringify(userDetails),
-    };
 
-    GetDigest().then((d) => CreatePO("ckeditor", POData, d).then());
+    let commData = {
+      Title: channelid,
+      users: userDetails,
+    };
+    console.log("commData", commData);
+
+    // var peoplePicker = this.SPClientPeoplePicker.SPClientPeoplePickerDict99
+    //   .peoplepicker_TopSpan;
+    // var DistributorList = peoplePicker.GetAllUserKeys();
+    // console.log("savetoList", adduser, "DistributorList", DistributorList);
+
+    GetDigest().then((d) => CreatePO("ckeditor", commData, d).then());
   };
 }
 
