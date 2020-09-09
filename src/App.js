@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
-import PeoplePicker from "./Components/PeoplePicker";
-import Ckeditorprops from "./Components/Ckeditorprops";
+import PeoplePicker from "./components/communication/CkEditor/PeoplePicker";
+import Ckeditorprops from "./components/communication/CkEditor/ckeditor";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
